@@ -1,13 +1,14 @@
 #include <string>
 #include <cctype>
 #include <map>
-#include "Huff.h"
 #include <iostream>
+#include "Huff.h"
 
+// From a string of text, produces a binary string with tree and encoded data.
 void Huff::encode(const std::string& input, std::string& output)
 {
 	// Count the occurence of letters in the text.
-	std::map<char, int> letterCount;
+	std::map<char, unsigned> letterCount;
 	for(const auto &c : input)
 	{
 		auto it = letterCount.find(c);
@@ -23,20 +24,27 @@ void Huff::encode(const std::string& input, std::string& output)
 	std::string buffer;
 	for(const auto &c : input)
 	{
-		buffer.append(m_tree.encodeChar(c));
+		buffer.append(1, m_tree.encodeChar(c));
 	}
 	// Write the tree and buffer to the output string.	
-	std::string treeData(m_tree.toFile());
+	std::string treeData(m_tree.treeToFile());
 	output = std::string(treeData + buffer);
 }
 
+// From a valid string of tree and encoded data, produces a decoded string.
 bool Huff::decode(const std::string& input, std::string& output)
 {
-	std::string treeData = 
-	if(treeData.empty())
+	// Check whether we can create a HuffTree from the input string.
+	size_t loc = input.find(m_tree.getTerminator());
+	if(loc == std::string::npos)
 		return false;
-
-	output = input;
+	if(!m_tree.createFromString(input.substr(0, loc)))
+		return false;
+	std::string buffer;
+	for(const auto &c : input.substr(loc + 1))
+	{
+		buffer.append(1, m_tree.decodeChar(c));
+	}
+	output = buffer;
 	return true;
 }
-

@@ -2,8 +2,8 @@
 #define HUFFNODE_H
 
 struct HuffNode {
-	unsigned weight;
 	char value;
+	unsigned weight;
 	std::tuple<HuffNode*, HuffNode*> links;
 };
 
