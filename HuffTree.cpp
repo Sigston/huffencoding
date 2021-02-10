@@ -12,9 +12,7 @@
 HuffTree::HuffTree(const std::map<char, unsigned>& letterCount)
 {
 	if(!createFromMap(letterCount))
-	{
 		wipeTree();
-	}
 }
 
 HuffTree::~HuffTree()
@@ -27,11 +25,9 @@ HuffTree::~HuffTree()
 
 bool HuffTree::createFromMap(const std::map<char, unsigned>& letterCount)
 {
-	// 1. Populate the member vector with nodes.
+	// 1. Populate the member vector with nodes with no links.
 	for(const auto& [value, weight] : letterCount)
-	{
-		m_allNodes.push_back( { value, weight, { nullptr, nullptr } } );
-	}
+		m_allNodes.push_back( { std::string(1, value), weight, { nullptr, nullptr } } );
 	// 2. Copy this structure into a temp vec of ptrs. We will use this for workings out.
 	std::vector<HuffNode*> ptrVec;
 	for(auto& node : m_allNodes)
@@ -43,17 +39,44 @@ bool HuffTree::createFromMap(const std::map<char, unsigned>& letterCount)
 	// 	This node is inserted properly into the member vector and at the right place in the 
 	// 	vec of ptrs. The two items used are removed from the vec of ptrs.
 	while(ptrVec.size() > 1)
-	{
-		ptrVec
+	{	
+		for(auto ptr : ptrVec)
+			std::cout << "Value: " << ptr->value << " Weight: " << ptr->weight << std::endl;
+		std::cout << "ptrVec[0]->value: " << ptrVec[0]->value << " ptrVec[1]->value: " << ptrVec[1]->value <<
+		       " m_allNodes.back().value: " << m_allNodes.back().value << std::endl;
+		m_allNodes.push_back( { ptrVec[0]->value + ptrVec[1]->value, 
+				ptrVec[0]->weight + ptrVec[1]->weight, { ptrVec[0], ptrVec[1] } } );
+		std::cout << "ptrVec[0]->value: " << ptrVec[0]->value << " ptrVec[1]->value: " << ptrVec[1]->value <<
+		       " m_allNodes.back().value: " << m_allNodes.back().value << std::endl;
+		ptrVec.erase(ptrVec.begin(), ptrVec.begin() + 2);
+		std::cout << "ptrVec[0]->value: " << ptrVec[0]->value << " ptrVec[1]->value: " << ptrVec[1]->value <<
+		       " m_allNodes.back().value: " << m_allNodes.back().value << std::endl;
+		if((ptrVec.empty())|| (m_allNodes.back().weight > ptrVec.back()->weight))
+		{
+			ptrVec.push_back(&m_allNodes.back());
+		std::cout << "ptrVec[0]->value: " << ptrVec[0]->value << " ptrVec[1]->value: " << ptrVec[1]->value <<
+		       " m_allNodes.back().value: " << m_allNodes.back().value << std::endl;
+		}
+		else
+		{
+			for(auto it = ptrVec.begin(); it != ptrVec.end(); it++)
+			{
+				if((*it)->weight >= m_allNodes.back().weight)
+				{
+					ptrVec.insert(it, &m_allNodes.back());
+		std::cout << "ptrVec[0]->value: " << ptrVec[0]->value << " ptrVec[1]->value: " << ptrVec[1]->value <<
+		       " m_allNodes.back().value: " << m_allNodes.back().value << std::endl;
+					break;
+				}
+			}
+		std::cout << "ptrVec[0]->value: " << ptrVec[0]->value << " ptrVec[1]->value: " << ptrVec[1]->value <<
+		       " m_allNodes.back().value: " << m_allNodes.back().value << std::endl;
+		}
+		std::cout << "ptrVec[0]->value: " << ptrVec[0]->value << " ptrVec[1]->value: " << ptrVec[1]->value <<
+		       " m_allNodes.back().value: " << m_allNodes.back().value << std::endl;
+		std::cout << " ======================= " << std::endl;
 	}
-	// 5. Keep doing (4) until there is only one node left. This is the start node and must be placed at
-	//
-	//	the beginning of the member vector.
-	// 6. Verify the HuffTree. 
-	if(verifyTree())
-		return true;
-	else
-		return false;
+	return true;
 }
 
 bool HuffTree::createFromString(const std::string& binaryTree)

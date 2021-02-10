@@ -23,12 +23,9 @@ void Huff::encode(const std::string& input, std::string& output)
 	// Translate the input stream into encoded binary in a buffer.
 	std::string buffer;
 	for(const auto &c : input)
-	{
 		buffer.append(1, m_tree.encodeChar(c));
-	}
 	// Write the tree and buffer to the output string.	
-	std::string treeData(m_tree.treeToFile());
-	output = std::string(treeData + buffer);
+	output = std::string(m_tree.treeToFile() + buffer);
 }
 
 // From a valid string of tree and encoded data, produces a decoded string.

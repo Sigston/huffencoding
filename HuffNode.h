@@ -1,10 +1,11 @@
 #ifndef HUFFNODE_H
 #define HUFFNODE_H
+#include <string>
 
 struct HuffNode {
-	char value;
+	std::string value;
 	unsigned weight;
-	std::tuple<HuffNode*, HuffNode*> links;
+	std::pair<HuffNode*, HuffNode*> links;
 };
 
 #endif

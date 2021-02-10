@@ -24,6 +24,7 @@ private:
 	// Private member functions
 	bool verifyTree();
 	void wipeTree();
+	void printTree();
 private:
 	// HuffTree stores a vector of all nodes created. This is used for quick deletion.
 	// All member functions access m_nodes[0] and traverse the tree using node functions.
